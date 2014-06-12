@@ -50,4 +50,33 @@ length(xna)
 
 Fill in missing values with median for the given time interval
 ```{r}
+activitynona<-activity
+stepsfiller<-tapply(activitynona$steps, activitynona$interval, median, na.rm=T)
+stepsfiller<-cbind(intervals,stepsfiller)
+for (a in 1:nrow(activitynona)){
+  if (is.na(activitynona$steps[a])){
+    missinginterval=as.numeric(activitynona$interval[a])
+    for (b in 1:nrow(stepsfiller)){
+      if (missinginterval==stepsfiller[b,1]){
+        activitynona$steps[a]=stepsfiller[b,1]
+      }
+    }
+  }
+}
+```
+
+Recalculate and plot number of steps taken daily
+```{r fig.height=4}
+dailystepsnona<-tapply(activitynona$steps,activitynona$date,sum)
+hist(dailystepsnona, xlab='Steps',main="Daily steps with NA's replaced")
+```
+
+Recalculate the mean and median total steps taken per day
+
+```{r}
+meanstepsnona<-mean(dailystepsnona, na.rm=T)
+medianstepsnona<-median(dailystepsnona, na.rm=T)
+meanstepsnona
+medianstepsnona
+```
 
