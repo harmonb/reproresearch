@@ -1,0 +1,53 @@
+Reproducible Research Peer Assignment 1
+=========================================
+
+Load the data and calculate daily steps taken
+```{r}
+activity<-read.csv('activity.csv')
+dailysteps<-tapply(activity$steps,activity$date,sum)
+```
+
+Make a histogram of the total number of steps taken per day
+```{r fig.height=4}
+hist(dailysteps, xlab='Steps')
+```
+
+Calculate the mean and median total steps taken per day
+
+```{r}
+meansteps<-mean(dailysteps, na.rm=T)
+mediansteps<-median(dailysteps, na.rm=T)
+meansteps
+mediansteps
+```
+
+Calculate and plot the average number of steps taken by time interval over all days
+```{r fig.height=4}
+avgsteps<-tapply(activity$steps, activity$interval, mean, na.rm=T)
+intervals<-unique(activity$interval)
+intervalsteps<-cbind(intervals,avgsteps)
+plot(avgsteps, type='l', xlab='Intervals', ylab='Mean of Steps')
+```
+
+Which interval has the maximum number of steps (on average) across all days?
+```{r}
+maxsteps<-c(0,0)
+for (a in 1:nrow(intervalsteps)){
+  if (avgsteps[a]>maxsteps[2]){
+    maxsteps[1]<-intervals[a]
+    maxsteps[2]<-avgsteps[a]
+  }  
+}
+as.integer(maxsteps[1])
+```
+
+Determine the number of NA's in the data
+```{r}
+x<-is.na(activity)
+xna<-activity[x]
+length(xna)
+```
+
+Fill in missing values with median for the given time interval
+```{r}
+
